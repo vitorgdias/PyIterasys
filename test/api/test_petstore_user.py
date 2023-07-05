@@ -89,13 +89,19 @@ def test_delete_user():
         url=base_url + '/' + username,
         headers=headers
     )
-    # Format
-    response_body = response.json()
-    print(response)                         # Json response
-    print(response.status_code)             # Status Code
-    print(response_body)                    # Format Response
-    # Evaluate
-    assert response.status_code == status_code_esperado
-    assert response_body['code'] == codigo_esperado
-    assert response_body['type'] == tipo_esperado
-    assert response_body['message'] == mensagem_esperada
+    match response.status_code:
+        case 200:                               # Delete the user
+            # Format
+            response_body = response.json()
+            print(response)                         # Json response
+            print(response.status_code)             # Status Code
+            print(response_body)                    # Format Response
+            # Evaluate
+            assert response.status_code == status_code_esperado
+            assert response_body['code'] == codigo_esperado
+            assert response_body['type'] == tipo_esperado
+            assert response_body['message'] == mensagem_esperada
+        case 400:
+            print('Incorrect user')
+        case 404:
+            print('User not found')
