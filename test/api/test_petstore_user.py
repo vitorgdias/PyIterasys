@@ -1,9 +1,12 @@
 # Library
+import time
+
 import pytest           # Unit test framework
 import requests         # API test framework - Request / Response
 # API address
 base_url = 'https://petstore.swagger.io/v2/user'
 headers = {'Content-Type': 'application/json'}
+user_token = ''
 # Test
 def test_create_user():
     # Settings
@@ -105,3 +108,33 @@ def test_delete_user():
             print('Incorrect user')
         case 404:
             print('User not found')
+def test_user_login():
+    # Settings
+    username = 'user'
+    password = '123456'
+    status_code_expected = 200
+    code_expected = 200
+    type_expected = 'unknown'
+    first_message_expected = 'logged in user session:'
+    # Execution
+    response = requests.get(
+        url=f'{base_url}/login?username={username}&password={password}',
+        headers=headers
+    )
+    # Format
+    response_body = response.json()
+    print(response)
+    print(response.status_code)
+    print(response_body)
+    # Evaluate
+    assert response.status_code == status_code_expected
+    assert response_body['code'] == code_expected
+    assert response_body['type'] == type_expected
+    assert response_body['message'].find(first_message_expected) != -1
+    # Assert to verify if the message in response body contain the initial phrase
+    # If the phrase don't have the words or sentences, -1 means false
+
+    # Extract the token from response message
+    response_message = response_body['message']
+    user_token = response_message[23:37]
+    print(f'User token is: {user_token}')
